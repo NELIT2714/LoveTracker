@@ -22,7 +22,7 @@ async def new_user(callback):
         "telegram_id": int(callback.from_user.id),
         "first_name": str(callback.from_user.first_name),
         "last_name": str(callback.from_user.last_name) if callback.from_user.last_name is not None else None,
-        "username": str(callback.from_user.username),
+        "username": str(callback.from_user.username) if callback.from_user.username is not None else None,
         "language_code": str(callback.from_user.language_code),
         "is_premium": bool(callback.from_user.is_premium),
         "creation_timestamp": int(timestamp),
@@ -45,7 +45,7 @@ async def update_user(callback):
         {"$set": {
             "first_name": str(callback.from_user.first_name),
             "last_name": str(callback.from_user.last_name) if callback.from_user.last_name is not None else None,
-            "username": str(callback.from_user.username),
+            "username": str(callback.from_user.username) if callback.from_user.username is not None else None,
             "language_code": str(callback.from_user.language_code),
             "is_premium": bool(callback.from_user.is_premium),
             "update_timestamp": int(timestamp)
@@ -115,3 +115,12 @@ async def find_pair(user):
         mongo["pairs"].find_one({"pair_member": int(user.get("telegram_id"))})
     )
     return [user_pair_creator, user_pair_member]
+
+
+async def get_start_argument(message):
+    start_argument_message = message.text.split()
+    if len(start_argument_message) < 2:
+        return None
+    start_argument = start_argument_message[1]
+    return start_argument
+
